@@ -11,3 +11,5 @@ class Exercise(db.Model):
     category = db.Column(db.String, nullable=False)
     equipment_needed = db.Column(db.Boolean, nullable=False, default=False)
     
+    workout_excercises = db.relationship
+    workouts = 
