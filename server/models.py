@@ -11,5 +11,21 @@ class Exercise(db.Model):
     category = db.Column(db.String, nullable=False)
     equipment_needed = db.Column(db.Boolean, nullable=False, default=False)
     
-    workout_excercises = db.relationship
-    workouts = 
+    workout_excercises = db.relationship('WorkoutExercise', back_populates='exercise', cascade= 'all, delete-orphan')
+    workouts = db.relationship('Workout', secondary='workout_exercises', back_populates='exercises')
+    
+    @validates('name')
+    def validate_name(self, key, value):
+        if not value or len(value.strip()) == 0:
+            raise ValueError("Exercise name cannot be empty.")
+        return value
+    
+    @validates('category')
+    def validate_category(self, key, value):
+        allowed = ['Cardio', 'Strength', 'Flexibility', 'Balance', 'Other']
+        if value.lower() not in allowed:
+            raise ValueError(f"Category must be one of: {', '.join(allowed)}")
+        return value.lower()
+    
+    def __repr__(self):
+        return f'<Exercise {self.name}>'
