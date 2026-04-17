@@ -1,5 +1,5 @@
-from flask_sqlachemy import SQLAlchemy
-from sqlachemy.orm import validates
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import validates
 
 db = SQLAlchemy()
 
@@ -11,8 +11,8 @@ class Exercise(db.Model):
     category = db.Column(db.String, nullable=False)
     equipment_needed = db.Column(db.Boolean, nullable=False, default=False)
     
-    workout_excercises = db.relationship('WorkoutExercise', back_populates='exercise', cascade= 'all, delete-orphan')
-    workouts = db.relationship('Workout', secondary='workout_exercises', back_populates='exercises')
+    workout_exercises = db.relationship('WorkoutExercise', back_populates='exercise', cascade='all, delete-orphan', overlaps='workouts')
+    workouts = db.relationship('Workout', secondary='workout_exercises', back_populates='exercises', overlaps='workout_exercises')
     
     @validates('name')
     def validate_name(self, key, value):
@@ -22,7 +22,7 @@ class Exercise(db.Model):
     
     @validates('category')
     def validate_category(self, key, value):
-        allowed = ['Cardio', 'Strength', 'Flexibility', 'Balance', 'Other']
+        allowed = ['cardio', 'strength', 'flexibility', 'balance', 'other']
         if value.lower() not in allowed:
             raise ValueError(f"Category must be one of: {', '.join(allowed)}")
         return value.lower()
@@ -30,8 +30,34 @@ class Exercise(db.Model):
     def __repr__(self):
         return f'<Exercise {self.name}>'
     
+class Workout(db.Model):
+    __tablename__ = 'workouts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    duration_minutes = db.Column(db.Integer, nullable=False)
+    notes = db.Column(db.Text)
+    
+    workout_exercises = db.relationship('WorkoutExercise', back_populates='workout', cascade='all, delete-orphan', overlaps='exercises')
+    exercises = db.relationship('Exercise', secondary='workout_exercises', back_populates='workouts', overlaps='workout_exercises')
+    
+    @validates('duration_minutes')
+    def validate_duration(self, key, value):
+        if value is None or value <= 0:
+            raise ValueError("Duration must be a positive number.")
+        return value
+    
+    @validates('date')
+    def validate_date(self, key, value):
+        if value is None:
+            raise ValueError("Date cannot be empty.")
+        return value
+    
+    def __repr__(self):
+        return f'<Workout {self.date}>'
+    
 class WorkoutExercise(db.Model):
-    ___tablename__ = 'workout_exercises'
+    __tablename__ = 'workout_exercises'
     
     id = db.Column(db.Integer, primary_key=True)
     workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'), nullable=False)
@@ -40,8 +66,8 @@ class WorkoutExercise(db.Model):
     reps = db.Column(db.Integer)
     duration_seconds = db.Column(db.Integer)
     
-    workout = db.relationship('Workout', back_populates='workout_exercises')
-    exercise = db.relationship('Exercise', back_populates='workout_excercises')
+    workout = db.relationship('Workout', back_populates='workout_exercises', overlaps='exercises,workouts')
+    exercise = db.relationship('Exercise', back_populates='workout_exercises', overlaps='exercises,workouts')
     
     @validates('sets')
     def validate_sets(self, key, value):

@@ -19,9 +19,9 @@ with app.app_context():
     db.session.add_all([e1, e2, e3, e4, e5, e6])
     db.session.commit()
     
-    w1 = Workout(data = date(2026, 1, 10), duration_minutes = 45, notes = "Morning session")
-    w2 = Workout(data = date(2026, 1, 11), duration_minutes = 30, notes = "Quick cardio session")
-    w3 = Workout(data = date(2026, 1, 14), duration_minutes = 60, notes = "Full body Workout!!!!!!")
+    w1 = Workout(date=date(2026, 1, 10), duration_minutes=45, notes="Morning session")
+    w2 = Workout(date=date(2026, 1, 12), duration_minutes=30, notes="Quick cardio")
+    w3 = Workout(date=date(2026, 1, 15), duration_minutes=60, notes="Full body day")
     
     db.session.add_all([w1, w2, w3])
     db.session.commit()
