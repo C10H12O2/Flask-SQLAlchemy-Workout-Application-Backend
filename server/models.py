@@ -39,3 +39,22 @@ class WorkoutExercise(db.Model):
     sets = db.Column(db.Integer)
     reps = db.Column(db.Integer)
     duration_seconds = db.Column(db.Integer)
+    
+    workout = db.relationship('Workout', back_populates='workout_exercises')
+    exercise = db.relationship('Exercise', back_populates='workout_excercises')
+    
+    @validates('sets')
+    def validate_sets(self, key, value):
+        if value is not None and value <= 0:
+            raise ValueError("Sets must be a positive integer.")
+        return value
+    
+    @validates('reps')
+    def validate_reps(self, key, value):
+        if value is not None and value <= 0:
+            raise ValueError("Reps must be a positive integer.")
+        return value
+    
+    def __repr__(self):
+        return f'<WorkoutExercise workout = {self.workout_id} exercise = {self.exercise_id}>'
+    
