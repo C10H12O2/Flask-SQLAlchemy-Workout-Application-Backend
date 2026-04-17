@@ -29,4 +29,12 @@ class WorkoutExerciseSchema(Schema):
     exercise = fields.Nested(lambda: ExerciseSchema(exclude=('workouts',)), dump_only=True)
     workout = fields.Nested(lambda: WorkoutSchema(exclude=('exercises',)), dump_only=True)
 
+exercise_schema = ExerciseSchema()
+exercises_schema = ExerciseSchema(many=True)
+
+workout_schema = WorkoutSchema()
+workouts_schema = WorkoutSchema(many=True)
+
+workout_exercise_schema = WorkoutExerciseSchema()
+workout_exercises_schema = WorkoutExerciseSchema(many=True)
         
