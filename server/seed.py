@@ -25,3 +25,14 @@ with app.app_context():
     
     db.session.add_all([w1, w2, w3])
     db.session.commit()
+    
+    we1 = WorkoutExercise(workout_id = w1.id, exercise_id = e1.id, sets = 3, reps = 15)
+    we2 = WorkoutExercise(workout_id = w1.id, exercise_id = e3.id, duration_seconds = 900)
+    we3 = WorkoutExercise(workout_id = w2.id, exercise_id = e2.id, duration_seconds = 1800)
+    we4 = WorkoutExercise(workout_id = w3.id, exercise_id = e1.id, sets = 4, reps = 15)
+    we5 = WorkoutExercise(workout_id = w3.id, exercise_id = e6.id, sets = 5, reps = 10)
+    
+    db.session.add_all([we1, we2, we3, we4, we5])
+    db.session.commit()
+    
+    print("Seeding is complete!!!🎉")
